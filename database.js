@@ -5,9 +5,10 @@ const db = new sequelize({
   database: process.env.db,
   host: process.env.host,
   username: process.env.user,
+  password: process.env.password,
 });
 
-db.sync({ force: true })
+db.sync()
   .then(() => {
     console.log('DB connection successful!!');
   })
