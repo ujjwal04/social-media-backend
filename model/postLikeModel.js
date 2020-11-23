@@ -3,12 +3,7 @@ const db = require('./../database');
 const like = require('./likeModel');
 const post = require('./postModel');
 
-const postLike = db.define('post_like', {
-  timestamp: {
-    type: sequelize.TIME,
-    allowNull: false,
-  },
-});
+const postLike = db.define('post_like', {});
 
 like.belongsToMany(post, { through: postLike, foreignKey: 'like_id' });
 
