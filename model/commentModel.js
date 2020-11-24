@@ -2,6 +2,8 @@ const sequelize = require('sequelize');
 const db = require('./../database');
 const post = require('./postModel');
 
+const catchAsync = require('./../utils/catchAsync');
+
 const comment = db.define('comment', {
   id: {
     type: sequelize.INTEGER,
@@ -32,5 +34,17 @@ const comment = db.define('comment', {
     },
   },
 });
+
+comment.addHook(
+  'afterCreate',
+  catchAsync(async (comment, options) => {
+    await post.increment(['comments'], {
+      by: 1,
+      where: {
+        id: comment.post_id,
+      },
+    });
+  })
+);
 
 module.exports = comment;

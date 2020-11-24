@@ -26,4 +26,16 @@ const reply = db.define('reply', {
   },
 });
 
+reply.addHook(
+  'afterCreate',
+  catchAsync(async (reply, options) => {
+    await comment.increment(['replies'], {
+      by: 1,
+      where: {
+        id: reply.comment_id,
+      },
+    });
+  })
+);
+
 module.exports = reply;

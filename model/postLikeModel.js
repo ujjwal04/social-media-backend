@@ -1,6 +1,5 @@
 const sequelize = require('sequelize');
 const db = require('./../database');
-const like = require('./likeModel');
 const post = require('./postModel');
 const user = require('./userModel');
 
@@ -29,5 +28,17 @@ const postLike = db.define('post_like', {
     },
   },
 });
+
+postLike.addHook(
+  'afterCreate',
+  catchAsync(async (commentLike, options) => {
+    await post.increment(['likes'], {
+      by: 1,
+      where: {
+        id: commentLike.post_id,
+      },
+    });
+  })
+);
 
 module.exports = postLike;

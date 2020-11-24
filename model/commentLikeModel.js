@@ -28,6 +28,18 @@ const commentLike = db.define('comment_like', {
   },
 });
 
+commentLike.addHook(
+  'afterCreate',
+  catchAsync(async (commentLike, options) => {
+    await comment.increment(['likes'], {
+      by: 1,
+      where: {
+        id: commentLike.comment_id,
+      },
+    });
+  })
+);
+
 // commentLike.belongsTo(user, {
 //   foreignKey: 'user_id',
 //   onDelete: 'cascade',
