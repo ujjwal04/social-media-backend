@@ -1,6 +1,6 @@
 const sequelize = require('sequelize');
 const db = require('./../database');
-const reply = require('./replyModel');
+const post = require('./postModel');
 
 const comment = db.define('comment', {
   id: {
@@ -8,16 +8,21 @@ const comment = db.define('comment', {
     autoIncrement: true,
     primaryKey: true,
   },
-  timestamp: {
-    type: sequelize.TIME,
-    allowNull: false,
-  },
-  type: {
-    type: sequelize.STRING,
-    allowNull: false,
-    validate: {
-      notNull: { msg: 'please give a valid type' },
+  post_id: {
+    type: sequelize.INTEGER,
+    onDelete: 'CASCADE',
+    references: {
+      model: post,
+      key: 'id',
     },
+  },
+  likes: {
+    type: sequelize.INTEGER,
+    defaultValue: 0,
+  },
+  replies: {
+    type: sequelize.INTEGER,
+    defaultValue: 0,
   },
   content: {
     type: sequelize.STRING,
@@ -27,7 +32,5 @@ const comment = db.define('comment', {
     },
   },
 });
-
-comment.hasMany(reply, { foreignKey: 'comment_id' });
 
 module.exports = comment;

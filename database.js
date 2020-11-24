@@ -8,7 +8,7 @@ const db = new sequelize({
   password: process.env.password,
 });
 
-db.sync()
+db.sync({ force: true })
   .then(() => {
     console.log('DB connection successful!!');
   })

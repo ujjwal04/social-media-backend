@@ -7,22 +7,20 @@ const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 
 exports.createLike = catchAsync(async (req, res, next) => {
-  const newLike = await Like.create({
-    user_id: req.user.id,
-    type: req.body.type,
-    emoji: req.body.emoji,
-  });
-
-  let likeType;
-  if (newLike.type === 'comment') {
-    likeType = await CommentLike.create({
-      like_id: newLike.id,
-      comment_id: req.body.comment_id,
+  let newLike;
+  if (req.body.type === 'comment') {
+    newLike = await CommentLike.create({
+      comment_id: req.params.id,
+      user_id: req.user.id,
+      type: req.body.type,
+      emoji: req.body.emoji,
     });
-  } else if (newLike.type === 'post') {
-    likeType = await PostLike.create({
-      like_id: newLike.id,
-      post_id: req.body.post_id,
+  } else if (req.body.type === 'post') {
+    newLike = await PostLike.create({
+      post_id: req.params.id,
+      user_id: req.user.id,
+      type: req.body.type,
+      emoji: req.body.emoji,
     });
   }
 
@@ -30,6 +28,21 @@ exports.createLike = catchAsync(async (req, res, next) => {
     status: 'success',
     data: {
       newLike,
+    },
+  });
+});
+
+exports.getAllLikesInPost = catchAsync(async (req, res, next) => {
+  const likes = await PostLike.findAll({
+    where: {
+      post_id: req.params.id,
+    },
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      likes,
     },
   });
 });

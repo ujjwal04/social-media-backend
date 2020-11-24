@@ -5,10 +5,10 @@ const likeController = require('../controllers/likeController');
 
 const router = express.Router();
 
-router
-  .route('/')
-  .post(authController.protect, likeController.createLike)
-  .delete(authController.protect, likeController.deleteLike);
+// router
+//   .route('/')
+//   .post(authController.protect, likeController.createLike)
+//   .delete(authController.protect, likeController.deleteLike);
 
 router
   .route('/:id')

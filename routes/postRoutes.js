@@ -1,6 +1,8 @@
 const express = require('express');
 const authController = require('../controllers/authController');
 const postController = require('../controllers/postController');
+const likeController = require('../controllers/likeController');
+const commentController = require('../controllers/commentController');
 
 const router = express.Router();
 
@@ -14,5 +16,22 @@ router
   .get(authController.protect, postController.getPost)
   .patch(authController.protect, postController.updatePost)
   .delete(authController.protect, postController.deletePost);
+
+router
+  .route('/:id/like')
+  .post(authController.protect, likeController.createLike)
+  .delete(authController.protect, likeController.deleteLike);
+
+router
+  .route('/:id/likes')
+  .get(authController.protect, likeController.createLike);
+
+router
+  .route('/:id/comment')
+  .post(authController.protect, commentController.createComment);
+
+router
+  .route('/:id/comments')
+  .get(authController.protect, commentController.getAllCommentsInAPost);
 
 module.exports = router;

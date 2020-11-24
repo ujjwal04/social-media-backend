@@ -1,5 +1,7 @@
 const sequelize = require('sequelize');
 const db = require('./../database');
+const user = require('./userModel');
+const comment = require('./commentModel');
 
 const reply = db.define('reply', {
   id: {
@@ -7,9 +9,13 @@ const reply = db.define('reply', {
     autoIncrement: true,
     primaryKey: true,
   },
-  timestamp: {
-    type: sequelize.TIME,
-    allowNull: false,
+  comment_id: {
+    type: sequelize.INTEGER,
+    onDelete: 'CASCADE',
+    references: {
+      model: comment,
+      key: 'id',
+    },
   },
   content: {
     type: sequelize.STRING,

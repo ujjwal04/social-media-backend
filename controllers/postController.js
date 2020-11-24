@@ -4,7 +4,16 @@ const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 
 exports.getAllPosts = catchAsync(async (req, res, next) => {
-  const posts = await Post.findAll();
+  const posts = await Post.findAll({
+    attributes: {
+      exclude: ['user_id'],
+    },
+    include: [
+      {
+        model: User,
+      },
+    ],
+  });
 
   res.status(200).json({
     status: 'success',

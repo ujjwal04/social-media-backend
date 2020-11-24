@@ -21,6 +21,14 @@ const post = db.define('post', {
       notNull: { msg: 'please give a valid password' },
     },
   },
+  likes: {
+    type: sequelize.INTEGER,
+    defaultValue: 0,
+  },
+  comments: {
+    type: sequelize.INTEGER,
+    defaultValue: 0,
+  },
 });
 
 module.exports = post;

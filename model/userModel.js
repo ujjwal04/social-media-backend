@@ -8,6 +8,11 @@ const comment = require('./commentModel');
 const user = db.define(
   'user',
   {
+    id: {
+      type: sequelize.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
     user_name: {
       type: sequelize.STRING,
       allowNull: false,
@@ -22,11 +27,6 @@ const user = db.define(
       validate: {
         notNull: { msg: 'please give a valid name' },
       },
-    },
-    id: {
-      type: sequelize.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
     },
     profile_pic: {
       type: sequelize.STRING,
@@ -51,7 +51,19 @@ const user = db.define(
 );
 
 user.hasMany(post, { foreignKey: 'user_id', onDelete: 'cascade' });
-user.hasMany(comment, { foreignKey: 'user_id', onDelete: 'cascade' });
+post.belongsTo(user, {
+  foreignKey: 'user_id',
+});
+
+user.hasMany(comment, {
+  as: 'user_id',
+  foreignKey: 'user_id',
+  onDelete: 'cascade',
+});
+comment.belongsTo(user, {
+  foreignKey: 'user_id',
+});
+
 user.hasMany(reply, { foreignKey: 'user_id', onDelete: 'cascade' });
 
 user.addHook('beforeCreate', async (user, options) => {

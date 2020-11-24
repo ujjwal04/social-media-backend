@@ -1,6 +1,8 @@
 const sequelize = require('sequelize');
 const db = require('./../database');
 
+const user = require('./userModel');
+
 const like = db.define('like', {
   id: {
     type: sequelize.INTEGER,
@@ -22,5 +24,7 @@ const like = db.define('like', {
     },
   },
 });
+
+like.belongsTo(user, { foreignKey: 'user_id', onDelete: 'cascade' });
 
 module.exports = like;
