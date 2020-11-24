@@ -9,13 +9,13 @@ process.on('uncaughtException', (err) => {
 
 const app = require('./app');
 
-const user = require('./model/userModel');
-const comment = require('./model/commentModel');
-const post = require('./model/postModel');
-const commentLike = require('./model/commentLikeModel');
-const postLike = require('./model/postLikeModel');
-const reply = require('./model/replyModel');
-const like = require('./model/likeModel');
+// const user = require('./model/userModel');
+// const comment = require('./model/commentModel');
+// const post = require('./model/postModel');
+// const commentLike = require('./model/commentLikeModel');
+// const postLike = require('./model/postLikeModel');
+// const reply = require('./model/replyModel');
+// const like = require('./model/likeModel');
 
 const port = process.env.PORT || 3000;
 const server = app.listen(port, () => console.log(`Listening to port ${port}`));
