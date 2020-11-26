@@ -3,6 +3,7 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const cors = require('cors');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -14,6 +15,9 @@ const commentRouter = require('./routes/commentRoute');
 const app = express();
 
 // 1) GLOBAL MIDDLEWARES
+
+//Allowing CORS
+app.use(cors());
 
 // Set Security HTTP headers
 app.use(helmet());

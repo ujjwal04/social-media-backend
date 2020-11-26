@@ -6,7 +6,7 @@ const likeController = require('../controllers/likeController');
 const router = express.Router();
 
 router
-  .route('/:id/like')
+  .route('/:id/likes')
   .post(authController.protect, likeController.createLike);
 
 router

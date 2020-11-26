@@ -18,7 +18,7 @@ router
   .delete(authController.protect, postController.deletePost);
 
 router
-  .route('/:id/like')
+  .route('/:id/likes')
   .post(authController.protect, likeController.createLike)
   .delete(authController.protect, likeController.deleteLike);
 
@@ -27,7 +27,7 @@ router
   .get(authController.protect, likeController.createLike);
 
 router
-  .route('/:id/comment')
+  .route('/:id/comments')
   .post(authController.protect, commentController.createComment);
 
 router
