@@ -76,6 +76,16 @@ user.addHook('beforeCreate', async (user, options) => {
   user.password = await bcrypt.hash(user.password, 12);
 });
 
+user.addHook('beforeUpdate', async (user, options) => {
+  // Only run this function if password was actually modified
+  if (!user.changed().includes('password')) {
+    return;
+  }
+
+  // Hash the password with the cost of 12
+  user.password = await bcrypt.hash(user.password, 12);
+});
+
 user.prototype.correctPassword = async (candidatePassword, userPassword) => {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
