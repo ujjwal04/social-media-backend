@@ -9,6 +9,14 @@ router.route('/signup').post(authController.signup);
 router.route('/login').post(authController.login);
 
 router
+  .route('/updateMyPassword')
+  .patch(authController.protect, authController.updatePassword);
+
+router
+  .route('/updateProfilePic')
+  .patch(authController.protect, authController.updateProfilePic);
+
+router
   .route('/:id')
   .get(authController.protect, userController.getUser)
   .patch(authController.protect, authController.updateUser)
@@ -17,9 +25,5 @@ router
 router
   .route('/:id/posts')
   .get(authController.protect, postController.getAllPostsByUser);
-
-router
-  .route('/updateMyPassword')
-  .post(authController.protect, authController.updatePassword);
 
 module.exports = router;

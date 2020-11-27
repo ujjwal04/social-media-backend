@@ -1,5 +1,6 @@
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
+const firebase = require('./../utils/firebase');
 const User = require('../model/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
@@ -24,6 +25,18 @@ const createSendToken = (user, statusCode, res) => {
       },
     },
   });
+};
+
+const saveProfilePicInFirebase = async (blob, next) => {
+  try {
+    const ref = firebase.storage().ref('/users').child('pic1');
+    const uploadTask = ref.put(blob);
+    const downloadUrl = ref.getDownloadURL();
+    return downloadUrl;
+  } catch (err) {
+    console.log(err);
+    return next(new AppError('Some error occurred while uploading', 500));
+  }
 };
 
 exports.getAllUsers = (req, res) => {
@@ -157,12 +170,66 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
-exports.updateUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined!',
+exports.updateUser = catchAsync(async (req, res, next) => {
+  // 1) Create error if user posts password data
+  if (req.body.password || req.body.passwordConfirm)
+    return next(new AppError('This route is not for updating password', 400));
+
+  // 2) Check for the existing user in db
+  const updatedUser = await User.findOne({
+    attributes: {
+      include: ['password'],
+    },
+    where: {
+      id: req.user.id,
+    },
   });
-};
+
+  await updatedUser.update(req.body, {
+    where: {
+      id: req.user.id,
+    },
+    hooks: false,
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user: updatedUser,
+    },
+  });
+});
+
+exports.updateProfilePic = catchAsync(async (req, res, next) => {
+  if (!req.body.profile_pic)
+    return next(new AppError('Please provide a profile pic', 400));
+  const updatedUser = await User.findOne({
+    where: {
+      id: req.user.id,
+    },
+  });
+
+  const blob = JSON.parse(
+    `{"_data":{"lastModified":0,"name":"e84ec5af-80fd-42e0-a81b-6696ea3175ad.jpg","size":89703,"offset":0,"type":"image/jpeg","blobId":"e147dd0b-b36c-4505-8fd0-33b040e16a36","__collector":null}}`
+  );
+  const uploadedImageUrl = saveProfilePicInFirebase(blob, next);
+
+  await updatedUser.update(
+    { profile_pic: uploadedImageUrl },
+    {
+      where: {
+        id: req.user.id,
+      },
+      hooks: false,
+    }
+  );
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user: updatedUser,
+    },
+  });
+});
 
 exports.deleteUser = (req, res) => {
   res.status(500).json({
