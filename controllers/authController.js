@@ -209,10 +209,7 @@ exports.updateProfilePic = catchAsync(async (req, res, next) => {
     },
   });
 
-  const blob = JSON.parse(
-    `{"_data":{"lastModified":0,"name":"e84ec5af-80fd-42e0-a81b-6696ea3175ad.jpg","size":89703,"offset":0,"type":"image/jpeg","blobId":"e147dd0b-b36c-4505-8fd0-33b040e16a36","__collector":null}}`
-  );
-  const uploadedImageUrl = saveProfilePicInFirebase(blob, next);
+  const uploadedImageUrl = saveProfilePicInFirebase(req.body.profile_pic, next);
 
   await updatedUser.update(
     { profile_pic: uploadedImageUrl },
