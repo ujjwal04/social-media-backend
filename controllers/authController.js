@@ -1,6 +1,6 @@
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
-const firebase = require('./../utils/firebase');
+//const admin = require('./../utils/firebase');
 const User = require('../model/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
@@ -27,17 +27,26 @@ const createSendToken = (user, statusCode, res) => {
   });
 };
 
-const saveProfilePicInFirebase = async (blob, next) => {
-  try {
-    const ref = firebase.storage().ref('/users').child('pic1');
-    const uploadTask = ref.put(blob);
-    const downloadUrl = ref.getDownloadURL();
-    return downloadUrl;
-  } catch (err) {
-    console.log(err);
-    return next(new AppError('Some error occurred while uploading', 500));
-  }
-};
+// const saveProfilePicInFirebase = async (blob, next) => {
+//   try {
+//     // console.log('idhar aya');
+//     // const ref = await firebase.storage().ref('users').child('pic1').put(blob);
+//     // // .put(blob);
+//     // console.log(ref);
+//     // const downloadUrl = await firebase
+//     //   .storage()
+//     //   .ref('/users')
+//     //   .child('pic1')
+//     //   .getDownloadURL();
+//     // return downloadUrl;
+//     console.log('asdas');
+//     const bucket = await admin.storage().bucket();
+//     console.log(bucket);
+//     bucket.upload(blob);
+//     console.log('idhar aya');
+//     return 'asdsad';
+//   } catch (err) {}
+// };
 
 exports.getAllUsers = (req, res) => {
   res.status(500).json({
@@ -50,6 +59,8 @@ exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
     user_name: req.body.user_name,
     name: req.body.name,
+    email: req.body.email,
+    bio: req.body.bio ? req.body.bio : null,
     profile_pic: req.body.profile_pic ? req.body.profile_pic : null,
     password: req.body.password,
     passwordChangedAt: req.body.passwordChangedAt
@@ -66,7 +77,10 @@ exports.signup = catchAsync(async (req, res, next) => {
       user: {
         id: newUser.id,
         user_name: newUser.user_name,
+        name: newUser.name,
         profile_pic: newUser.profile_pic,
+        email: newUser.email,
+        bio: newUser.bio,
         createdAt: newUser.createdAt,
       },
     },
@@ -104,8 +118,11 @@ exports.login = catchAsync(async (req, res, next) => {
       user: {
         id: user.id,
         user_name: user.user_name,
+        name: user.name,
         profile_pic: user.profile_pic,
         createdAt: user.createdAt,
+        bio: user.bio,
+        email: user.email,
       },
     },
   });
@@ -170,35 +187,35 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
-exports.updateUser = catchAsync(async (req, res, next) => {
-  // 1) Create error if user posts password data
-  if (req.body.password || req.body.passwordConfirm)
-    return next(new AppError('This route is not for updating password', 400));
+// exports.updateUser = catchAsync(async (req, res, next) => {
+//   // 1) Create error if user posts password data
+//   if (req.body.password || req.body.passwordConfirm)
+//     return next(new AppError('This route is not for updating password', 400));
 
-  // 2) Check for the existing user in db
-  const updatedUser = await User.findOne({
-    attributes: {
-      include: ['password'],
-    },
-    where: {
-      id: req.user.id,
-    },
-  });
+//   // 2) Check for the existing user in db
+//   const updatedUser = await User.findOne({
+//     attributes: {
+//       include: ['password'],
+//     },
+//     where: {
+//       id: req.user.id,
+//     },
+//   });
 
-  await updatedUser.update(req.body, {
-    where: {
-      id: req.user.id,
-    },
-    hooks: false,
-  });
+//   await updatedUser.update(req.body, {
+//     where: {
+//       id: req.user.id,
+//     },
+//     hooks: false,
+//   });
 
-  res.status(200).json({
-    status: 'success',
-    data: {
-      user: updatedUser,
-    },
-  });
-});
+//   res.status(200).json({
+//     status: 'success',
+//     data: {
+//       user: updatedUser,
+//     },
+//   });
+// });
 
 exports.updateProfilePic = catchAsync(async (req, res, next) => {
   if (!req.body.profile_pic)
@@ -209,10 +226,13 @@ exports.updateProfilePic = catchAsync(async (req, res, next) => {
     },
   });
 
-  const uploadedImageUrl = saveProfilePicInFirebase(req.body.profile_pic, next);
+  // const uploadedImageUrl = await saveProfilePicInFirebase(
+  //   req.body.profile_pic,
+  //   next
+  // );
 
   await updatedUser.update(
-    { profile_pic: uploadedImageUrl },
+    { profile_pic: req.body.profile_pic },
     {
       where: {
         id: req.user.id,

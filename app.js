@@ -1,4 +1,6 @@
 const express = require('express');
+const http = require('http');
+const socketio = require('socket.io');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const xss = require('xss-clean');
@@ -13,6 +15,10 @@ const likeRouter = require('./routes/likeRoute');
 const commentRouter = require('./routes/commentRoute');
 
 const app = express();
+const server = http.createServer(app);
+const io = socketio(server);
+
+io.on('connection', (socket) => console.log('New client connected'));
 
 // 1) GLOBAL MIDDLEWARES
 
@@ -50,4 +56,4 @@ app.all('*', (req, res, next) => {
 
 app.use(globalErrorHandler);
 
-module.exports = app;
+module.exports = server;

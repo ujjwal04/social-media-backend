@@ -6,6 +6,7 @@ const db = new sequelize({
   host: process.env.host,
   username: process.env.user,
   password: process.env.password,
+  define: { charset: 'utf8mb4', dialectOptions: { collate: 'utf8mb4_bin' } },
 });
 
 db.sync()

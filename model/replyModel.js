@@ -3,19 +3,11 @@ const db = require('./../database');
 const user = require('./userModel');
 const comment = require('./commentModel');
 
-const reply = db.define('reply', {
+const reply = db.define('replyOnComment', {
   id: {
     type: sequelize.INTEGER,
     autoIncrement: true,
     primaryKey: true,
-  },
-  comment_id: {
-    type: sequelize.INTEGER,
-    onDelete: 'CASCADE',
-    references: {
-      model: comment,
-      key: 'id',
-    },
   },
   content: {
     type: sequelize.STRING,
@@ -24,6 +16,14 @@ const reply = db.define('reply', {
       notNull: { msg: 'please give a valid comment' },
     },
   },
+});
+
+comment.hasMany(reply, {
+  foreignKey: 'comment_id',
+  onDelete: 'cascade',
+});
+reply.belongsTo(comment, {
+  foreignKey: 'comment_id',
 });
 
 reply.addHook(

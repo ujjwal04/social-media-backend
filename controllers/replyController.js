@@ -5,6 +5,7 @@ const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 
 exports.createReply = catchAsync(async (req, res, next) => {
+  console.log(req.params.id);
   const newReply = await Reply.create({
     comment_id: req.params.id,
     content: req.body.content,
@@ -39,3 +40,8 @@ exports.getAllCommentsInAPost = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+// export const getAllRepliesInAPost = catchAsync(async (req,res,next) => {
+//   const replies = await Reply.findAll({
+//   })
+// })

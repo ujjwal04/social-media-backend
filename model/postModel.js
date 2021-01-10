@@ -1,6 +1,8 @@
 const sequelize = require('sequelize');
 const db = require('./../database');
 
+const comment = require('./commentModel');
+
 const post = db.define('post', {
   id: {
     type: sequelize.INTEGER,

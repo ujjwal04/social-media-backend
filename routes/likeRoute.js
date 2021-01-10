@@ -11,6 +11,10 @@ const router = express.Router();
 //   .delete(authController.protect, likeController.deleteLike);
 
 router
+  .route('/')
+  .get(authController.protect, likeController.getAllLikesByAUser);
+
+router
   .route('/:id')
   .get(authController.protect, postController.getPost)
   .patch(authController.protect, postController.updatePost)

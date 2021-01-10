@@ -9,15 +9,6 @@ const postLike = db.define('post_like', {
     primaryKey: true,
     autoIncrement: true,
   },
-  post_id: {
-    type: sequelize.INTEGER,
-    primaryKey: true,
-    onDelete: 'CASCADE',
-    references: {
-      model: post,
-      key: 'id',
-    },
-  },
   user_id: {
     type: sequelize.INTEGER,
     primaryKey: true,
@@ -29,13 +20,30 @@ const postLike = db.define('post_like', {
   },
 });
 
+post.hasMany(postLike, { foreignKey: 'post_id', onDelete: 'cascade' });
+postLike.belongsTo(post, {
+  foreignKey: 'post_id',
+});
+
 postLike.addHook(
   'afterCreate',
-  catchAsync(async (commentLike, options) => {
+  catchAsync(async (postLike, options) => {
     await post.increment(['likes'], {
       by: 1,
       where: {
-        id: commentLike.post_id,
+        id: postLike.post_id,
+      },
+    });
+  })
+);
+
+postLike.addHook(
+  'afterDestroy',
+  catchAsync(async (postLike, options) => {
+    await post.decrement(['likes'], {
+      by: 1,
+      where: {
+        id: postLike.post_id,
       },
     });
   })

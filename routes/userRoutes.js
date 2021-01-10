@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.route('/signup').post(authController.signup);
 router.route('/login').post(authController.login);
+router.route('/update').patch(authController.protect, userController.updateMe);
 
 router
   .route('/updateMyPassword')
@@ -19,7 +20,7 @@ router
 router
   .route('/:id')
   .get(authController.protect, userController.getUser)
-  .patch(authController.protect, authController.updateUser)
+  //.patch(authController.protect, authController.updateUser)
   .delete(authController.protect, userController.deleteUser);
 
 router

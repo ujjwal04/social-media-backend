@@ -14,7 +14,7 @@ const user = db.define(
       primaryKey: true,
     },
     user_name: {
-      type: sequelize.STRING,
+      type: sequelize.STRING(100),
       allowNull: false,
       unique: true,
       validate: {
@@ -22,18 +22,30 @@ const user = db.define(
       },
     },
     name: {
-      type: sequelize.STRING,
+      type: sequelize.STRING(100),
       allowNull: false,
       validate: {
         notNull: { msg: 'please give a valid name' },
       },
     },
+    email: {
+      type: sequelize.STRING(100),
+      allowNull: false,
+      unique: true,
+      validate: {
+        notNull: { msg: 'please give a valid email' },
+      },
+    },
+    bio: {
+      type: sequelize.STRING(100),
+      allowNull: true,
+    },
     profile_pic: {
-      type: sequelize.STRING,
+      type: sequelize.STRING(150),
       allowNull: true,
     },
     password: {
-      type: sequelize.STRING,
+      type: sequelize.STRING(100),
       allowNull: false,
       validate: {
         notNull: {
@@ -64,7 +76,13 @@ comment.belongsTo(user, {
   foreignKey: 'user_id',
 });
 
-user.hasMany(reply, { foreignKey: 'user_id', onDelete: 'cascade' });
+user.hasMany(reply, {
+  foreignKey: 'user_id',
+  onDelete: 'cascade',
+});
+reply.belongsTo(user, {
+  foreignKey: 'user_id',
+});
 
 user.addHook('beforeCreate', async (user, options) => {
   // Only run this function if password was actually modified

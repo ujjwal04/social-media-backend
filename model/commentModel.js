@@ -4,19 +4,11 @@ const post = require('./postModel');
 
 const catchAsync = require('./../utils/catchAsync');
 
-const comment = db.define('comment', {
+const comment = db.define('commentOnPost', {
   id: {
     type: sequelize.INTEGER,
     autoIncrement: true,
     primaryKey: true,
-  },
-  post_id: {
-    type: sequelize.INTEGER,
-    onDelete: 'CASCADE',
-    references: {
-      model: post,
-      key: 'id',
-    },
   },
   likes: {
     type: sequelize.INTEGER,
@@ -34,6 +26,22 @@ const comment = db.define('comment', {
     },
   },
 });
+
+post.hasMany(comment, {
+  foreignKey: 'post_id',
+  onDelete: 'cascade',
+});
+comment.belongsTo(post, {
+  foreignKey: 'post_id',
+});
+
+// user.hasMany(comment, {
+//   foreignKey: 'user_id',
+//   onDelete: 'cascade',
+// });
+// comment.belongsTo(user, {
+//   foreignKey: 'post_id',
+// });
 
 comment.addHook(
   'afterCreate',

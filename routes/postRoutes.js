@@ -20,11 +20,7 @@ router
 router
   .route('/:id/likes')
   .post(authController.protect, likeController.createLike)
-  .delete(authController.protect, likeController.deleteLike);
-
-router
-  .route('/:id/likes')
-  .get(authController.protect, likeController.createLike);
+  .delete(authController.protect, likeController.deleteLikeOnAPost);
 
 router
   .route('/:id/comments')

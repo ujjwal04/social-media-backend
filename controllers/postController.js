@@ -1,7 +1,10 @@
 const User = require('../model/userModel');
 const Post = require('./../model/postModel');
+const Comment = require('./../model/commentModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
+const PostLike = require('../model/postLikeModel');
+const Reply = require('../model/replyModel');
 
 exports.getAllPosts = catchAsync(async (req, res, next) => {
   const posts = await Post.findAll({
@@ -12,7 +15,19 @@ exports.getAllPosts = catchAsync(async (req, res, next) => {
       {
         model: User,
       },
+      {
+        model: PostLike,
+      },
+      {
+        model: Comment,
+        include: [
+          { model: User },
+          { model: Reply, include: [{ model: User }] },
+        ],
+        order: [['createdAt', 'DESC']],
+      },
     ],
+    order: [['createdAt', 'DESC']],
   });
 
   res.status(200).json({
@@ -44,10 +59,24 @@ exports.getAllPostsByUser = catchAsync(async (req, res, next) => {
     where: {
       user_id: req.params.id,
     },
+    include: [
+      {
+        model: User,
+      },
+      {
+        model: PostLike,
+      },
+      {
+        model: Comment,
+        include: [{ model: User }],
+        order: [['createdAt', 'DESC']],
+      },
+    ],
   });
 
   res.status(200).json({
     status: 'success',
+    results: posts.length,
     data: {
       posts,
     },
@@ -61,10 +90,24 @@ exports.createPost = catchAsync(async (req, res, next) => {
     user_id: req.user.id,
   });
 
+  const newAssociatedPost = await Post.findOne({
+    where: {
+      id: newPost.dataValues.id,
+    },
+    include: [
+      {
+        model: User,
+      },
+      {
+        model: PostLike,
+      },
+    ],
+  });
+
   res.status(201).json({
     status: 'success',
     data: {
-      newPost,
+      newAssociatedPost,
     },
   });
 });
